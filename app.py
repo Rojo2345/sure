@@ -1,8 +1,10 @@
 import streamlit as st
+import pandas as pd
+import os
 
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
-# Alias del usuario
+# 🔐 Alias del usuario
 st.sidebar.title("👤 Usuario")
 usuario = st.sidebar.text_input("Ingresa tu alias:", value="")
 
@@ -10,14 +12,20 @@ if usuario.strip() == "":
     st.warning("⚠️ Por favor, ingresa tu alias en la barra lateral para continuar.")
     st.stop()
 
-# Inicializar historial si no existe
+# 📁 Inicializar historial global
 if "historial" not in st.session_state:
     st.session_state.historial = {}
 
-# Asegurar historial por usuario
+# 📂 Cargar historial desde CSV si existe
+archivo_csv = f"{usuario}_historial.csv"
 if usuario not in st.session_state.historial:
-    st.session_state.historial[usuario] = {}
+    if os.path.exists(archivo_csv):
+        df = pd.read_csv(archivo_csv)
+        st.session_state.historial[usuario] = df.to_dict("records")
+    else:
+        st.session_state.historial[usuario] = []
 
+# 🧮 Interfaz de cálculo
 st.markdown("### 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
 
@@ -32,6 +40,7 @@ with st.form("form_apuesta"):
 
     calcular = st.form_submit_button("Calcular")
 
+# 🧠 Lógica de cálculo
 def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
     monto_B = (cuota_A * monto_A) / cuota_B
     inversion_total = monto_A + monto_B
@@ -43,6 +52,7 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
     porcentaje_ganancia = (ganancia_neta / inversion_total) * 100
     return monto_B, inversion_total, ganancia_neta, ganancia_neta_A, ganancia_neta_B, porcentaje_ganancia
 
+# 🎯 Mostrar resultados
 if calcular:
     monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
 
@@ -68,9 +78,12 @@ if calcular:
                 "Ganancia neta": ganancia_neta,
                 "Rentabilidad": rentabilidad
             })
+            # Guardar historial en CSV
+            df = pd.DataFrame(st.session_state.historial[usuario])
+            df.to_csv(archivo_csv, index=False)
             st.success("✅ Apuesta guardada en tu historial")
 
-# Mostrar historial del usuario actual
+# 📚 Mostrar historial del usuario actual
 historial_usuario = st.session_state.historial[usuario]
 if historial_usuario:
     st.markdown(f"### 📚 Historial de {usuario}")
@@ -83,4 +96,3 @@ if historial_usuario:
             st.write(f"💰 Inversión Total: ${item['Inversión Total']:,.2f}")
             st.write(f"📈 Rentabilidad: {item['Rentabilidad']:.2f}%")
             st.write(f"💵 Ganancia Neta: ${item['Ganancia neta']:,.2f}")
-
