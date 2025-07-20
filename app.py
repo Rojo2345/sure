@@ -82,6 +82,7 @@ if calcular:
             df = pd.DataFrame(st.session_state.historial[usuario])
             df.to_csv(archivo_csv, index=False)
             st.success("✅ Apuesta guardada en tu historial")
+            st.experimental_rerun()  # 🔁 Forzar recarga para mostrar historial
 
 # 📚 Mostrar historial del usuario actual
 historial_usuario = st.session_state.historial.get(usuario, [])
@@ -120,3 +121,4 @@ if historial_usuario:
             st.write(f"💵 Ganancia Neta: ${item['Ganancia neta']:,.2f}")
 else:
     st.info("ℹ️ Aún no hay historial registrado para este usuario.")
+
