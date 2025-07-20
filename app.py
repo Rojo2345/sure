@@ -84,9 +84,31 @@ if calcular:
             st.success("✅ Apuesta guardada en tu historial")
 
 # 📚 Mostrar historial del usuario actual
-historial_usuario = st.session_state.historial[usuario]
+historial_usuario = st.session_state.historial.get(usuario, [])
+
 if historial_usuario:
     st.markdown(f"### 📚 Historial de {usuario}")
+
+    # 🔘 Opciones de gestión
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🧹 Borrar historial"):
+            st.session_state.historial[usuario] = []
+            if os.path.exists(archivo_csv):
+                os.remove(archivo_csv)
+            st.success("✅ Historial borrado correctamente.")
+            st.experimental_rerun()
+
+    with col2:
+        df_export = pd.DataFrame(historial_usuario)
+        st.download_button(
+            label="📥 Exportar historial",
+            data=df_export.to_csv(index=False).encode("utf-8"),
+            file_name=f"{usuario}_historial.csv",
+            mime="text/csv"
+        )
+
+    # Mostrar apuestas
     for idx, item in enumerate(historial_usuario[::-1], 1):
         with st.expander(f"Apuesta #{len(historial_usuario) - idx + 1}"):
             st.write(f"🟢 Monto A: ${item['Monto A']:,.2f}")
@@ -96,3 +118,5 @@ if historial_usuario:
             st.write(f"💰 Inversión Total: ${item['Inversión Total']:,.2f}")
             st.write(f"📈 Rentabilidad: {item['Rentabilidad']:.2f}%")
             st.write(f"💵 Ganancia Neta: ${item['Ganancia neta']:,.2f}")
+else:
+    st.info("ℹ️ Aún no hay historial registrado para este usuario.")
