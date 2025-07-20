@@ -73,41 +73,47 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
 
 # Mostrar resultados
 if calcular:
-    monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
-
-    # Estilo rentabilidad
-    if rentabilidad > 0:
-        color = "#00c17d"
-        tag = f"📈 Ganancia +{rentabilidad:.2f}%"
-        pierde_gana = f"🟢 Gana: <strong>${ganancia_neta:,.2f}</strong>"
-    elif rentabilidad < 0:
-        color = "#ff4d4d"
-        tag = f"🔻 Pérdida {abs(rentabilidad):.2f}%"
-        pierde_gana = f"🔴 Pierde: <strong>${abs(ganancia_neta):,.2f}</strong>"
+    # 🔴 Manejo de errores
+    if monto_A == 0:
+        st.error("⚠️ El monto debe ser mayor que cero.")
+    elif cuota_A <= 1.0 or cuota_B <= 1.0:
+        st.error("⚠️ Las cuotas deben ser mayores a 1.00.")
     else:
-        color = "#ffd700"
-        tag = "🟡 Sin ganancia / pérdida"
-        pierde_gana = "🟡 Resultado neutro: <strong>$0.00</strong>"
+        monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
 
-    # Mostrar todo
-    st.markdown(f"""
-    <div class="result-box">
-        <h4>📊 <strong>Resultados:</strong></h4>
-        <p>Apostar: <span class="highlight">${monto_B:,.2f}</span> a cuota B</p>
-        <p>💰 Inversión total: <span class="highlight">${inversion_total:,.2f}</span></p>
-        <p style="background-color: {color};
-                  color: black;
-                  display: inline-block;
-                  padding: 0.4em 0.8em;
-                  border-radius: 5px;
-                  margin: 0.5em 0;
-                  font-weight: bold;">
-            {tag}
-        </p>
-        <div class="profit-box">✅ Si gana A: ${gA:,.2f}</div>
-        <div class="profit-box">✅ Si gana B: ${gB:,.2f}</div>
-        <div style="margin-top: 0.7em; font-size: 1.1em;">
-            {pierde_gana}
+        # Estilo rentabilidad
+        if rentabilidad > 0:
+            color = "#00c17d"
+            tag = f"📈 Ganancia +{rentabilidad:.2f}%"
+            pierde_gana = f"🟢 Gana: <strong>${ganancia_neta:,.2f}</strong>"
+        elif rentabilidad < 0:
+            color = "#ff4d4d"
+            tag = f"🔻 Pérdida {abs(rentabilidad):.2f}%"
+            pierde_gana = f"🔴 Pierde: <strong>${abs(ganancia_neta):,.2f}</strong>"
+        else:
+            color = "#ffd700"
+            tag = "🟡 Sin ganancia / pérdida"
+            pierde_gana = "🟡 Resultado neutro: <strong>$0.00</strong>"
+
+        # Mostrar resultados
+        st.markdown(f"""
+        <div class="result-box">
+            <h4>📊 <strong>Resultados:</strong></h4>
+            <p>Apostar: <span class="highlight">${monto_B:,.2f}</span> a cuota B</p>
+            <p>💰 Inversión total: <span class="highlight">${inversion_total:,.2f}</span></p>
+            <p style="background-color: {color};
+                      color: black;
+                      display: inline-block;
+                      padding: 0.4em 0.8em;
+                      border-radius: 5px;
+                      margin: 0.5em 0;
+                      font-weight: bold;">
+                {tag}
+            </p>
+            <div class="profit-box">✅ Si gana A: ${gA:,.2f}</div>
+            <div class="profit-box">✅ Si gana B: ${gB:,.2f}</div>
+            <div style="margin-top: 0.7em; font-size: 1.1em;">
+                {pierde_gana}
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
