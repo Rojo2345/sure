@@ -11,7 +11,7 @@ modo_actual = st.sidebar.checkbox("🔆 Modo claro", value=st.session_state.modo
 
 if modo_actual != st.session_state.modo_claro:
     st.session_state.modo_claro = modo_actual
-    st.experimental_rerun()  # 👈 Forzar recarga de estilos
+    st.rerun()  # 👈 Forzar recarga de estilos
 
 modo_claro = st.session_state.modo_claro
 
