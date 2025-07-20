@@ -1,11 +1,9 @@
 import streamlit as st
-import pandas as pd
-import os
 
-# 🖼️ Configuración de la página
+# Configuración de la página
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
-# 💅 Estilos personalizados tipo LudoBets
+# Estilo personalizado
 st.markdown("""
     <style>
     body {
@@ -45,10 +43,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🧮 Interfaz de cálculo
+# Título
 st.markdown("## 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
 
+# Formulario
 with st.form("form_apuesta"):
     col1, col2 = st.columns(2)
     with col1:
@@ -60,7 +59,7 @@ with st.form("form_apuesta"):
 
     calcular = st.form_submit_button("Calcular")
 
-# 🧠 Lógica de cálculo
+# Función de cálculo
 def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
     monto_B = (cuota_A * monto_A) / cuota_B
     inversion_total = monto_A + monto_B
@@ -72,11 +71,11 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
     porcentaje_ganancia = (ganancia_neta / inversion_total) * 100
     return monto_B, inversion_total, ganancia_neta, ganancia_neta_A, ganancia_neta_B, porcentaje_ganancia
 
-# 🎯 Mostrar resultados
+# Mostrar resultados
 if calcular:
     monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
 
-    # Estilo dinámico para rentabilidad
+    # Color según rentabilidad
     if rentabilidad > 0:
         rent_color = "#00c17d"
         rent_text = f"📈 Ganancia +{rentabilidad:.2f}%"
@@ -88,9 +87,9 @@ if calcular:
     else:
         rent_color = "#ffd700"
         rent_text = "🟡 Sin ganancia / pérdida"
-        resultado_texto = f"🟡 Resultado neutro: <strong>$0.00</strong>"
+        resultado_texto = "🟡 Resultado neutro: <strong>$0.00</strong>"
 
-    # ✅ Mostrar visual
+    # Mostrar en la interfaz
     st.markdown(f"""
     <div class="result-box">
         <h4>📊 <strong>Resultados:</strong></h4>
@@ -115,4 +114,3 @@ if calcular:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
