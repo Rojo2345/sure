@@ -1,5 +1,64 @@
 import streamlit as st
 
+# Configuración inicial
+st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
+
+# Contraste: selección del usuario
+modo_claro = st.sidebar.toggle("🔆 Modo claro", value=False)
+
+# Estilos CSS personalizados según contraste
+if modo_claro:
+    fondo = "#f4f4f4"
+    texto = "#000000"
+    fondo_resultado = "#ffffff"
+    borde = "#cccccc"
+    color_etiqueta = "#333333"
+else:
+    fondo = "#0f1117"
+    texto = "#ffffff"
+    fondo_resultado = "#2c2f36"
+    borde = "#444444"
+    color_etiqueta = "#00ffae"
+
+# Inyectar CSS
+st.markdown(f"""
+    <style>
+    body {{
+        background-color: {fondo};
+        color: {texto};
+    }}
+    .main {{
+        background-color: {fondo};
+        color: {texto};
+    }}
+    .result-box {{
+        background-color: {fondo_resultado};
+        padding: 1.2em;
+        border-radius: 10px;
+        color: {texto};
+        margin-top: 1em;
+        border: 1px solid {borde};
+    }}
+    .highlight {{
+        font-size: 1.2em;
+        font-weight: bold;
+        color: {color_etiqueta};
+    }}
+    .profit-box {{
+        background-color: #1e442f;
+        color: white;
+        padding: 0.5em;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 0.4em;
+    }}
+    .stButton>button {{
+        background-color: #2e64fe;
+        color: white;
+        font-weight: bold;
+    }}
+    </style>
+""", unsafe_allow_html=True)
 # Configuración
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
