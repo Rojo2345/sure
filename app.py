@@ -4,27 +4,6 @@ import os
 
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
-# 🔐 Alias del usuario
-st.sidebar.title("👤 Usuario")
-usuario = st.sidebar.text_input("Ingresa tu alias:", value="")
-
-if usuario.strip() == "":
-    st.warning("⚠️ Por favor, ingresa tu alias en la barra lateral para continuar.")
-    st.stop()
-
-# 📁 Inicializar historial global
-if "historial" not in st.session_state:
-    st.session_state.historial = {}
-
-# 📂 Cargar historial desde CSV si existe
-archivo_csv = f"{usuario}_historial.csv"
-if usuario not in st.session_state.historial:
-    if os.path.exists(archivo_csv):
-        df = pd.read_csv(archivo_csv)
-        st.session_state.historial[usuario] = df.to_dict("records")
-    else:
-        st.session_state.historial[usuario] = []
-
 # 🧮 Interfaz de cálculo
 st.markdown("### 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
