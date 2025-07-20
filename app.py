@@ -2,10 +2,59 @@ import streamlit as st
 import pandas as pd
 import os
 
+# 🖼️ Configuración de la página
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
+# 💅 Estilos personalizados tipo LudoBets
+st.markdown("""
+    <style>
+    body {
+        background-color: #0f1117;
+        color: white;
+    }
+    .main {
+        background-color: #0f1117;
+        color: white;
+    }
+    .result-box {
+        background-color: #2c2f36;
+        padding: 1.2em;
+        border-radius: 10px;
+        color: white;
+        margin-top: 1em;
+        border: 1px solid #444;
+    }
+    .highlight {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #00ffae;
+    }
+    .tag {
+        background-color: #00c17d;
+        color: white;
+        padding: 0.4em 0.8em;
+        border-radius: 5px;
+        display: inline-block;
+        margin: 0.3em 0;
+    }
+    .profit-box {
+        background-color: #1e442f;
+        color: white;
+        padding: 0.5em;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 0.4em;
+    }
+    .stButton>button {
+        background-color: #2e64fe;
+        color: white;
+        font-weight: bold;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # 🧮 Interfaz de cálculo
-st.markdown("### 🧮 Calculadora Betmastian.p")
+st.markdown("## 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
 
 with st.form("form_apuesta"):
@@ -35,16 +84,14 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
 if calcular:
     monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
 
-    st.markdown("### 🎯 Resultados:")
-    with st.container():
-        st.markdown(f"**Apostar:** `${monto_B:,.2f}` a cuota B")
-        st.markdown(f"💰 **Inversión total:** `${inversion_total:,.2f}`")
-        st.markdown(f"📈 **Rentabilidad:** `{rentabilidad:.2f}%`")
-        colA, colB = st.columns(2)
-        with colA:
-            st.success(f"✅ **Si gana A:** `${gA:,.2f}`")
-        with colB:
-            st.success(f"✅ **Si gana B:** `${gB:,.2f}`")
-
-
-
+    # Estilo visual de resultados
+    st.markdown(f"""
+    <div class="result-box">
+        <h4>📊 <strong>Resultados:</strong></h4>
+        <p>Apostar: <span class="highlight">${monto_B:,.2f}</span> a cuota B</p>
+        <p>💰 Inversión total: <span class="highlight">${inversion_total:,.2f}</span></p>
+        <p class="tag">% Rentabilidad: +{rentabilidad:.2f}%</p>
+        <div class="profit-box">✅ Si gana A: ${gA:,.2f}</div>
+        <div class="profit-box">✅ Si gana B: ${gB:,.2f}</div>
+    </div>
+    """, unsafe_allow_html=True)
