@@ -29,14 +29,6 @@ st.markdown("""
         font-weight: bold;
         color: #00ffae;
     }
-    .tag {
-        background-color: #00c17d;
-        color: white;
-        padding: 0.4em 0.8em;
-        border-radius: 5px;
-        display: inline-block;
-        margin: 0.3em 0;
-    }
     .profit-box {
         background-color: #1e442f;
         color: white;
@@ -84,14 +76,43 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
 if calcular:
     monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
 
-    # Estilo visual de resultados
+    # Estilo dinámico para rentabilidad
+    if rentabilidad > 0:
+        rent_color = "#00c17d"
+        rent_text = f"📈 Ganancia +{rentabilidad:.2f}%"
+        resultado_texto = f"🟢 Gana: <strong>${ganancia_neta:,.2f}</strong>"
+    elif rentabilidad < 0:
+        rent_color = "#ff4d4d"
+        rent_text = f"🔻 Pérdida {abs(rentabilidad):.2f}%"
+        resultado_texto = f"🔴 Pierde: <strong>${abs(ganancia_neta):,.2f}</strong>"
+    else:
+        rent_color = "#ffd700"
+        rent_text = "🟡 Sin ganancia / pérdida"
+        resultado_texto = f"🟡 Resultado neutro: <strong>$0.00</strong>"
+
+    # Estilo visual completo
     st.markdown(f"""
     <div class="result-box">
         <h4>📊 <strong>Resultados:</strong></h4>
         <p>Apostar: <span class="highlight">${monto_B:,.2f}</span> a cuota B</p>
         <p>💰 Inversión total: <span class="highlight">${inversion_total:,.2f}</span></p>
-        <p class="tag">% Rentabilidad: +{rentabilidad:.2f}%</p>
+
+        <p style="background-color: {rent_color}; 
+                  color: black;
+                  display: inline-block;
+                  padding: 0.4em 0.8em;
+                  border-radius: 5px;
+                  margin: 0.5em 0;
+                  font-weight: bold;">
+            {rent_text}
+        </p>
+
         <div class="profit-box">✅ Si gana A: ${gA:,.2f}</div>
         <div class="profit-box">✅ Si gana B: ${gB:,.2f}</div>
+
+        <div style="margin-top: 0.7em; font-size: 1.1em;">
+            {resultado_texto}
+        </div>
     </div>
     """, unsafe_allow_html=True)
+
