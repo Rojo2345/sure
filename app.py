@@ -16,7 +16,7 @@ if "historial" not in st.session_state:
 
 # Asegurar historial por usuario
 if usuario not in st.session_state.historial:
-    st.session_state.historial[usuario] = []
+    st.session_state.historial[usuario] = {}
 
 st.markdown("### 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
