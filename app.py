@@ -1,12 +1,24 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora LudoBets", layout="centered")
+st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
-# Sesión para historial
+# Alias del usuario
+st.sidebar.title("👤 Usuario")
+usuario = st.sidebar.text_input("Ingresa tu alias:", value="")
+
+if usuario.strip() == "":
+    st.warning("⚠️ Por favor, ingresa tu alias en la barra lateral para continuar.")
+    st.stop()
+
+# Inicializar historial si no existe
 if "historial" not in st.session_state:
-    st.session_state.historial = []
+    st.session_state.historial = {}
 
-st.markdown("### 🧮 Calculadora LudoBets")
+# Asegurar historial por usuario
+if usuario not in st.session_state.historial:
+    st.session_state.historial[usuario] = []
+
+st.markdown("### 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
 
 with st.form("form_apuesta"):
@@ -47,7 +59,7 @@ if calcular:
 
         marcar = st.checkbox("Marcar como apuesta realizada")
         if marcar:
-            st.session_state.historial.append({
+            st.session_state.historial[usuario].append({
                 "Monto A": monto_A,
                 "Cuota A": cuota_A,
                 "Cuota B": cuota_B,
@@ -56,13 +68,14 @@ if calcular:
                 "Ganancia neta": ganancia_neta,
                 "Rentabilidad": rentabilidad
             })
-            st.success("✅ Apuesta guardada en historial")
+            st.success("✅ Apuesta guardada en tu historial")
 
-# Mostrar historial
-if st.session_state.historial:
-    st.markdown("### 📚 Historial de Apuestas")
-    for idx, item in enumerate(st.session_state.historial[::-1], 1):
-        with st.expander(f"Apuesta #{len(st.session_state.historial) - idx + 1}"):
+# Mostrar historial del usuario actual
+historial_usuario = st.session_state.historial[usuario]
+if historial_usuario:
+    st.markdown(f"### 📚 Historial de {usuario}")
+    for idx, item in enumerate(historial_usuario[::-1], 1):
+        with st.expander(f"Apuesta #{len(historial_usuario) - idx + 1}"):
             st.write(f"🟢 Monto A: ${item['Monto A']:,.2f}")
             st.write(f"🔵 Cuota A: {item['Cuota A']}")
             st.write(f"🔴 Cuota B: {item['Cuota B']}")
@@ -70,3 +83,4 @@ if st.session_state.historial:
             st.write(f"💰 Inversión Total: ${item['Inversión Total']:,.2f}")
             st.write(f"📈 Rentabilidad: {item['Rentabilidad']:.2f}%")
             st.write(f"💵 Ganancia Neta: ${item['Ganancia neta']:,.2f}")
+
