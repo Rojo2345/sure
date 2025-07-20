@@ -90,14 +90,14 @@ if calcular:
         rent_text = "🟡 Sin ganancia / pérdida"
         resultado_texto = f"🟡 Resultado neutro: <strong>$0.00</strong>"
 
-    # Estilo visual completo
+    # ✅ Mostrar visual
     st.markdown(f"""
     <div class="result-box">
         <h4>📊 <strong>Resultados:</strong></h4>
         <p>Apostar: <span class="highlight">${monto_B:,.2f}</span> a cuota B</p>
         <p>💰 Inversión total: <span class="highlight">${inversion_total:,.2f}</span></p>
 
-        <p style="background-color: {rent_color}; 
+        <p style="background-color: {rent_color};
                   color: black;
                   display: inline-block;
                   padding: 0.4em 0.8em;
