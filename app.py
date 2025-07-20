@@ -84,7 +84,7 @@ if calcular:
         # Estilo rentabilidad
         if rentabilidad > 0:
             color = "#00c17d"
-            tag = f"📈 Ganancia +{rentabilidad:.2f}%"
+            tag = f"📈 Rentabilidad +{rentabilidad:.2f}%"
             pierde_gana = f"🟢 Gana: <strong>${ganancia_neta:,.2f}</strong>"
         elif rentabilidad < 0:
             color = "#ff4d4d"
