@@ -1,12 +1,21 @@
 import streamlit as st
 
-# Configuración inicial
+# Configurar página
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
-# Contraste: selección del usuario
-modo_claro = st.sidebar.toggle("🔆 Modo claro", value=False)
+# Alternar modo desde la barra lateral
+if "modo_claro" not in st.session_state:
+    st.session_state.modo_claro = False
 
-# Estilos CSS personalizados según contraste
+modo_actual = st.sidebar.checkbox("🔆 Modo claro", value=st.session_state.modo_claro)
+
+if modo_actual != st.session_state.modo_claro:
+    st.session_state.modo_claro = modo_actual
+    st.experimental_rerun()  # 👈 Forzar recarga de estilos
+
+modo_claro = st.session_state.modo_claro
+
+# Colores según modo
 if modo_claro:
     fondo = "#f4f4f4"
     texto = "#000000"
@@ -20,7 +29,7 @@ else:
     borde = "#444444"
     color_etiqueta = "#00ffae"
 
-# Inyectar CSS
+# Estilos CSS aplicados dinámicamente
 st.markdown(f"""
     <style>
     body {{
