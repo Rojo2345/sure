@@ -1,6 +1,7 @@
 import streamlit as st
+from decimal import Decimal, InvalidOperation
 
-# Configuración
+# Configuración de la página
 st.set_page_config(page_title="Calculadora Betmastian.p", layout="centered")
 
 # Estilos personalizados
@@ -43,6 +44,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Función para convertir texto a float (acepta , o .)
+def to_float(s: str, allow_zero=False):
+    s = (s or "").strip().replace(",", ".")
+    try:
+        x = float(Decimal(s))
+        if not allow_zero and x == 0.0:
+            return None
+        return x
+    except (InvalidOperation, ValueError):
+        return None
+
 # Título
 st.markdown("## 🧮 Calculadora Betmastian.p")
 st.caption("Calcula el monto para cubrir la apuesta")
@@ -51,32 +63,11 @@ st.caption("Calcula el monto para cubrir la apuesta")
 with st.form("form_apuesta"):
     col1, col2 = st.columns(2)
     with col1:
-        monto_A = st.number_input(
-            "Monto (A)", 
-            min_value=0.0, 
-            value=0.0, 
-            step=0.01, 
-            format="%.2f"
-        )
-        cuota_B = st.number_input(
-            "Cuota B", 
-            min_value=1.01, 
-            value=3.0, 
-            step=0.01, 
-            format="%.2f"
-        )
+        monto_A_str = st.text_input("Monto (A)", value="0.00", placeholder="Ej: 1000,50")
+        cuota_B_str = st.text_input("Cuota B", value="3.00", placeholder="Ej: 2.35")
     with col2:
-        cuota_A = st.number_input(
-            "Cuota A", 
-            min_value=1.01, 
-            value=1.5, 
-            step=0.01, 
-            format="%.2f"
-        )
-        dolar_casino = st.text_input(
-            "💲 Precio Dólar Casino (opcional)", 
-            placeholder="Ej: 1200"
-        )
+        cuota_A_str = st.text_input("Cuota A", value="1.50", placeholder="Ej: 1.80")
+        dolar_casino_str = st.text_input("💲 Precio Dólar Casino (opcional)", placeholder="Ej: 1200,00")
 
     calcular = st.form_submit_button("Calcular")
 
@@ -89,34 +80,45 @@ def calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B):
     ganancia_B = cuota_B * monto_B
     ganancia_neta_B = ganancia_B - inversion_total
     ganancia_neta = min(ganancia_neta_A, ganancia_neta_B)
-    porcentaje_ganancia = (ganancia_neta / inversion_total) * 100
+    porcentaje_ganancia = (ganancia_neta / inversion_total) * 100 if inversion_total else 0.0
     return monto_B, inversion_total, ganancia_neta, ganancia_neta_A, ganancia_neta_B, porcentaje_ganancia
 
 # Mostrar resultados
 if calcular:
-    # 🔴 Manejo de errores
-    if monto_A == 0:
-        st.error("⚠️ El monto debe ser mayor que cero.")
-    elif cuota_A <= 1.0 or cuota_B <= 1.0:
-        st.error("⚠️ Las cuotas deben ser mayores a 1.00.")
-    else:
-        monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(cuota_A, monto_A, cuota_B)
+    monto_A = to_float(monto_A_str)
+    cuota_A = to_float(cuota_A_str, allow_zero=False)
+    cuota_B = to_float(cuota_B_str, allow_zero=False)
+    dolar_casino = to_float(dolar_casino_str, allow_zero=True) if dolar_casino_str else None
 
-        # Estilo rentabilidad
+    errores = []
+    if monto_A is None or monto_A <= 0:
+        errores.append("⚠️ El monto debe ser un número válido > 0.")
+    if cuota_A is None or cuota_A <= 1.0:
+        errores.append("⚠️ La **Cuota A** debe ser un número > 1.00.")
+    if cuota_B is None or cuota_B <= 1.0:
+        errores.append("⚠️ La **Cuota B** debe ser un número > 1.00.")
+
+    if errores:
+        for e in errores:
+            st.error(e)
+    else:
+        monto_B, inversion_total, ganancia_neta, gA, gB, rentabilidad = calcular_apuesta_opuesta(
+            cuota_A, monto_A, cuota_B
+        )
+
+        # Estilo según rentabilidad
+        color = "#00c17d" if rentabilidad > 0 else ("#ff4d4d" if rentabilidad < 0 else "#ffd700")
         if rentabilidad > 0:
-            color = "#00c17d"
             tag = f"📈 Rentabilidad +{rentabilidad:.2f}%"
             pierde_gana = f"🟢 Gana: <strong>${ganancia_neta:,.2f}</strong>"
         elif rentabilidad < 0:
-            color = "#ff4d4d"
             tag = f"🔻 Pérdida {abs(rentabilidad):.2f}%"
             pierde_gana = f"🔴 Pierde: <strong>${abs(ganancia_neta):,.2f}</strong>"
         else:
-            color = "#ffd700"
             tag = "🟡 Sin ganancia / pérdida"
             pierde_gana = "🟡 Resultado neutro: <strong>$0.00</strong>"
 
-        # Mostrar resultados
+        # Mostrar resultados con estilo
         st.markdown(f"""
         <div class="result-box">
             <h4>📊 <strong>Resultados:</strong></h4>
@@ -138,3 +140,4 @@ if calcular:
             </div>
         </div>
         """, unsafe_allow_html=True)
+
