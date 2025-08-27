@@ -51,11 +51,32 @@ st.caption("Calcula el monto para cubrir la apuesta")
 with st.form("form_apuesta"):
     col1, col2 = st.columns(2)
     with col1:
-        monto_A = st.number_input("Monto (A)", min_value=0.0, format="%.2f", value=0.0)
-        cuota_B = st.number_input("Cuota B", min_value=1.01, format="%.2f", value=3.0)
+        monto_A = st.number_input(
+            "Monto (A)", 
+            min_value=0.0, 
+            value=0.0, 
+            step=0.01, 
+            format="%.2f"
+        )
+        cuota_B = st.number_input(
+            "Cuota B", 
+            min_value=1.01, 
+            value=3.0, 
+            step=0.01, 
+            format="%.2f"
+        )
     with col2:
-        cuota_A = st.number_input("Cuota A", min_value=1.01, format="%.2f", value=1.5)
-        dolar_casino = st.text_input("💲 Precio Dólar Casino (opcional)", placeholder="Ej: 1200")
+        cuota_A = st.number_input(
+            "Cuota A", 
+            min_value=1.01, 
+            value=1.5, 
+            step=0.01, 
+            format="%.2f"
+        )
+        dolar_casino = st.text_input(
+            "💲 Precio Dólar Casino (opcional)", 
+            placeholder="Ej: 1200"
+        )
 
     calcular = st.form_submit_button("Calcular")
 
